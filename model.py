@@ -23,6 +23,14 @@ OFFSET = {
     WEST: -1,
 }
 
+MOD = {
+    NORTH: 256,
+    EAST: 16,
+    SOUTH: 256,
+    WEST: 16,
+}
+
+
 # Masks
 M_NORTH = 0x01
 M_EAST  = 0x02
@@ -58,91 +66,91 @@ TOKENS = [''.join(token) for token in itertools.product(COLORS, SHAPES)]
 
 # Quadrants
 QUAD_1A = (
-    'NW,N,N,N,NE,NW,N,N,'
-    'W,S,X,X,X,X,SEYH,W,'
-    'WE,NWGT,X,X,X,X,N,X,'
-    'W,X,X,X,X,X,X,X,'
-    'W,X,X,X,X,X,S,X,'
+    'X,X,X,X,NE,NW,X,X,'
+    'X,S,X,X,X,X,SEYH,W,'
+    'E,NWGT,X,X,X,X,N,X,'
+    'X,X,X,X,X,X,X,X,'
+    'X,X,X,X,X,X,S,X,'
     'SW,X,X,X,X,X,NEBQ,W,'
     'NW,X,E,SWRC,X,X,X,S,'
-    'W,X,X,N,X,X,E,NW'
+    'X,X,X,N,X,X,E,NW'
 )
 
 QUAD_1B = (
-    'NW,NE,NW,N,NS,N,N,N,'
-    'W,S,X,E,NWRC,X,X,X,'
-    'W,NEGT,W,X,X,X,X,X,'
-    'W,X,X,X,X,X,SEYH,W,'
-    'W,X,X,X,X,X,N,X,'
+    'X,NE,NW,X,S,X,X,X,'
+    'X,S,X,E,NWRC,X,X,X,'
+    'X,NEGT,W,X,X,X,X,X,'
+    'X,X,X,X,X,X,SEYH,W,'
+    'X,X,X,X,X,X,N,X,'
     'SW,X,X,X,X,X,X,X,'
     'NW,X,E,SWBQ,X,X,X,S,'
-    'W,X,X,N,X,X,E,NW'
+    'X,X,X,N,X,X,E,NW'
 )
 
 QUAD_2A = (
-    'NW,N,N,NE,NW,N,N,N,'
-    'W,X,X,X,X,E,SWBC,X,'
-    'W,S,X,X,X,X,N,X,'
-    'W,NEYT,W,X,X,S,X,X,'
-    'W,X,X,X,E,NWGQ,X,X,'
-    'W,X,SERH,W,X,X,X,X,'
+    'X,X,X,NE,NW,X,X,X,'
+    'X,X,X,X,X,E,SWBC,X,'
+    'X,S,X,X,X,X,N,X,'
+    'X,NEYT,W,X,X,S,X,X,'
+    'X,X,X,X,E,NWGQ,X,X,'
+    'X,X,SERH,W,X,X,X,X,'
     'SW,X,N,X,X,X,X,S,'
     'NW,X,X,X,X,X,E,NW'
 )
 
 QUAD_2B = (
-    'NW,N,N,N,NE,NW,N,N,'
-    'W,X,SERH,W,X,X,X,X,'
-    'W,X,N,X,X,X,X,X,'
-    'WE,SWGQ,X,X,X,X,S,X,'
+    'X,X,X,X,NE,NW,X,X,'
+    'X,X,SERH,W,X,X,X,X,'
+    'X,X,N,X,X,X,X,X,'
+    'E,SWGQ,X,X,X,X,S,X,'
     'SW,N,X,X,X,E,NWYT,X,'
     'NW,X,X,X,X,S,X,X,'
-    'W,X,X,X,X,NEBC,W,S,'
-    'W,X,X,X,X,X,E,NW'
+    'X,X,X,X,X,NEBC,W,S,'
+    'X,X,X,X,X,X,E,NW'
 )
 
 QUAD_3A = (
-    'NW,N,N,NE,NW,N,N,N,'
-    'W,X,X,X,X,SEGH,W,X,'
-    'WE,SWRQ,X,X,X,N,X,X,'
+    'X,X,X,NE,NW,X,X,X,'
+    'X,X,X,X,X,SEGH,W,X,'
+    'E,SWRQ,X,X,X,N,X,X,'
     'SW,N,X,X,X,X,S,X,'
     'NW,X,X,X,X,E,NWYC,X,'
-    'W,X,S,X,X,X,X,X,'
-    'W,X,NEBT,W,X,X,X,S,'
-    'W,X,X,X,X,X,E,NW'
+    'X,X,S,X,X,X,X,X,'
+    'X,X,NEBT,W,X,X,X,S,'
+    'X,X,X,X,X,X,E,NW'
 )
 
 QUAD_3B = (
-    'NW,N,NS,N,NE,NW,N,N,'
-    'W,E,NWYC,X,X,X,X,X,'
-    'W,X,X,X,X,X,X,X,'
-    'W,X,X,X,X,E,SWBT,X,'
+    'X,X,S,X,NE,NW,X,X,'
+    'X,E,NWYC,X,X,X,X,X,'
+    'X,X,X,X,X,X,X,X,'
+    'X,X,X,X,X,E,SWBT,X,'
     'SW,X,X,X,S,X,N,X,'
     'NW,X,X,X,NERQ,W,X,X,'
-    'W,SEGH,W,X,X,X,X,S,'
-    'W,N,X,X,X,X,E,NW'
+    'X,SEGH,W,X,X,X,X,S,'
+    'X,N,X,X,X,X,E,NW'
 )
 
 QUAD_4A = (
-    'NW,N,N,NE,NW,N,N,N,'
-    'W,X,X,X,X,X,X,X,'
-    'W,X,X,X,X,SEBH,W,X,'
-    'W,X,S,X,X,N,X,X,'
+    'X,X,X,NE,NW,X,X,X,'
+    'X,X,X,X,X,X,X,X,'
+    'X,X,X,X,X,SEBH,W,X,'
+    'X,X,S,X,X,N,X,X,'
     'SW,X,NEGC,W,X,X,X,X,'
     'NW,S,X,X,X,X,E,SWRT,'
-    'WE,NWYQ,X,X,X,X,X,NS,'
-    'W,X,X,X,X,X,E,NW'
+    'E,NWYQ,X,X,X,X,X,NS,'
+    'X,X,X,X,X,X,E,NW'
 )
 
 QUAD_4B = (
-    'NW,N,N,NE,NW,N,N,N,'
-    'WE,SWRT,X,X,X,X,S,X,'
-    'W,N,X,X,X,X,NEGC,W,'
-    'W,X,X,X,X,X,X,X,'
-    'W,X,SEBH,W,X,X,X,S,'
+    'X,X,X,NE,NW,X,X,X,'
+    'E,SWRT,X,X,X,X,S,X,'
+    'X,N,X,X,X,X,NEGC,W,'
+    'X,X,X,X,X,X,X,X,'
+    'X,X,SEBH,W,X,X,X,S,'
     'SW,X,N,X,X,X,E,NWYQ,'
     'NW,X,X,X,X,X,X,S,'
-    'W,X,X,X,X,X,E,NW'
+    'X,X,X,X,X,X,E,NW'
 )
 
 QUADS = [
@@ -264,22 +272,35 @@ class Game(object):
     def compute_move(self, color, direction):
         index = self.robots[color]
         robots = self.robots.values()
+        #print color, direction
+        #print index, index % MOD[direction]
+        row = index - index % MOD[direction]
+        #print row
+        i = 0
         while True:
+            #print index, index % MOD[direction]
             if direction in self.grid[index]:
                 break
-            new_index = index + OFFSET[direction]
-            if new_index in robots:
+            new_index = (index + OFFSET[direction]) % MOD[direction] + row
+            if new_index == self.robots[color]:
+                index = new_index
+                break
+            elif new_index in robots:
+                if color == self.token[0] and not new_index in self.start_robots:
+                    self.new_robot = True
+                    #print "new robot"
                 break
             index = new_index
         return index
     def do_move(self, color, direction):
+        #print self.robots
         start = self.robots[color]
         last = self.last
         if last == (color, REVERSE[direction]):
             raise Exception
         end = self.compute_move(color, direction)
-        if start == end:
-            raise Exception
+#        if start == end:
+#            raise Exception
         self.moves += 1
         self.robots[color] = end
         self.last = (color, direction)
@@ -303,15 +324,17 @@ class Game(object):
     def key(self):
         return tuple(self.robots.itervalues())
     def search(self):
+        self.start_robots = self.robots.values()
+        self.new_robot = False
         max_depth = 1
         while True:
-            #print 'Searching to depth:', max_depth
+            print 'Searching to depth:', max_depth
             result = self._search([], set(), 0, max_depth)
             if result is not None:
                 return result
             max_depth += 1
     def _search(self, path, memo, depth, max_depth):
-        if self.over():
+        if self.over():# and self.new_robot:
             return list(path)
         if depth == max_depth:
             return None
@@ -324,6 +347,7 @@ class Game(object):
         else:
             colors = None
         moves = self.get_moves(colors)
+        self.new_robot = False
         for move in moves:
             data = self.do_move(*move)
             path.append(move)
