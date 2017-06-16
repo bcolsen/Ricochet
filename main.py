@@ -16,9 +16,12 @@ class View(wx.Panel):
         self.Bind(wx.EVT_PAINT, self.on_paint)
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
     def solve(self):
-        self.path = self.game.search()
+        self.solutions = self.game.search()
+        self.path = self.solutions[0]
         #self.path = ricochet.search(self.game, self.callback)
-        print ', '.join(''.join(move) for move in self.path)
+        #print 'solved', self.solutions
+        for path in self.solutions:
+            print ', '.join(''.join(move) for move in path)
         self.on_solve()
     def callback(self, depth, nodes, inner, hits):
         print 'Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits)
@@ -53,6 +56,11 @@ class View(wx.Panel):
             elif value == 'U' and self.undo:
                 self.undo_move()
                 self.Refresh()
+            elif value == 'R':
+                self.path = None
+                self.undo = []
+                self.lines = []
+                self.Refresh()
             elif value == 'N':
                 self.path = None
                 self.undo = []
@@ -69,10 +77,10 @@ class View(wx.Panel):
             if code in lookup:
                 color = self.color
                 direction = lookup[code]
-                try:
-                    self.do_move(color, direction)
-                except Exception:
-                    pass
+                #try:
+                self.do_move(color, direction)
+                #except Exception:
+                    #pass
                 self.Refresh()
     def on_paint(self, event):
         colors = {

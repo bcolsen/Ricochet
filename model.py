@@ -260,8 +260,8 @@ class Game(object):
                 return color
         return None
     def can_move(self, color, direction):
-        if self.last == (color, REVERSE[direction]):
-            return False
+        #if self.last == (color, REVERSE[direction]):
+        #    return False
         index = self.robots[color]
         if direction in self.grid[index]:
             return False
@@ -286,9 +286,9 @@ class Game(object):
                 index = new_index
                 break
             elif new_index in robots:
-                if color == self.token[0] and not new_index in self.start_robots:
-                    self.new_robot = True
-                    #print "new robot"
+#                if color == self.token[0] and not new_index in self.start_robots:
+#                    self.new_robot = True
+#                    #print "new robot"
                 break
             index = new_index
         return index
@@ -296,8 +296,8 @@ class Game(object):
         #print self.robots
         start = self.robots[color]
         last = self.last
-        if last == (color, REVERSE[direction]):
-            raise Exception
+#        if last == (color, REVERSE[direction]):
+#            raise Exception
         end = self.compute_move(color, direction)
 #        if start == end:
 #            raise Exception
@@ -323,19 +323,49 @@ class Game(object):
         return self.token in self.grid[self.robots[color]]
     def key(self):
         return tuple(self.robots.itervalues())
+    def unique(self,path):
+        #print 'unique', path
+        for mono in self.mono_list + self.result_list:
+            iter_mono = iter(mono)
+            m_move = next(iter_mono)
+            for move in path:
+                #print move, m_move
+                if move == m_move:
+                    try:
+                        m_move = next(iter_mono)
+                    except StopIteration:
+                        return False
+        return True
+    def mono(self, path):
+        other_colors = list(COLORS)
+        other_colors.remove(self.token[0])
+        #print other_colors
+        if len(set([move[0] for move in path])) <= 1:#all the same color
+            return True
+        else:
+            return False
     def search(self):
         self.start_robots = self.robots.values()
         self.new_robot = False
         max_depth = 1
+        self.result_list = []
+        self.mono_list = []
         while True:
             print 'Searching to depth:', max_depth
             result = self._search([], set(), 0, max_depth)
-            if result is not None:
-                return result
+            if len(self.result_list) >= 5 or max_depth > 10:
+                return self.result_list
             max_depth += 1
     def _search(self, path, memo, depth, max_depth):
         if self.over():# and self.new_robot:
-            return list(path)
+            if self.mono(path):
+                print 'mono', path
+                self.mono_list += [list(path)]
+            else:
+                if self.unique(path):
+                    self.result_list += [list(path)]
+#                else:
+#                    print "not unique"
         if depth == max_depth:
             return None
         key = (depth, self.key())
@@ -352,6 +382,7 @@ class Game(object):
             data = self.do_move(*move)
             path.append(move)
             result = self._search(path, memo, depth + 1, max_depth)
+            #print path
             path.pop(-1)
             self.undo_move(data)
             if result:
