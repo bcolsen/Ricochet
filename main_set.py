@@ -4,9 +4,10 @@ import model
 import ricochet
 
 class View(wx.Panel):
-    def __init__(self, parent, game):
+    def __init__(self, parent, match):
         wx.Panel.__init__(self, parent, style=wx.WANTS_CHARS)
-        self.game = game
+        self.match = match
+        self.game = match.game
         self.color = None
         self.path = None
         self.undo = []
@@ -17,12 +18,12 @@ class View(wx.Panel):
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
     def solve(self):
         self.solutions = self.game.search()
-        self.path = self.solutions[0]
+        self.path = list(self.solutions[0])
         #self.path = ricochet.search(self.game, self.callback)
         #print 'solved', self.solutions
-        for path in self.solutions:
-            print ', '.join(''.join(move[0:-1]) for move in path)
-        self.on_solve()
+        for i, path in enumerate(self.solutions):
+            print i, len(path), ', '.join(''.join(move[0:-1]) for move in path)
+        #self.on_solve()
     def callback(self, depth, nodes, inner, hits):
         print 'Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits)
     def on_solve(self):
@@ -36,10 +37,13 @@ class View(wx.Panel):
         end = self.game.compute_move(color, direction)
         data = self.game.do_move(color, direction, index)
         self.undo.append(data)
-        self.lines.append((color, start, end))
+        self.lines.append((color, start, end, direction))
     def undo_move(self):
         self.game.undo_move(self.undo.pop(-1))
         self.lines.pop(-1)
+    def reset(self):
+        for m in range(len(self.undo)):
+            self.undo_move()
     def on_size(self, event):
         event.Skip()
         self.Refresh()
@@ -56,17 +60,19 @@ class View(wx.Panel):
             elif value == 'U' and self.undo:
                 self.undo_move()
                 self.Refresh()
-            elif value == 'R':
-                self.path = None
-                self.undo = []
-                self.lines = []
+            elif value == 'A':
+                self.reset()
                 self.Refresh()
             elif value == 'N':
                 self.path = None
                 self.undo = []
                 self.lines = []
-                self.game = model.Game()
+                self.game = self.match.next_game()
                 self.Refresh()
+            elif value in '1234567890':
+                self.reset()
+                self.path = list(self.solutions[int(value)])
+                self.on_solve()
         elif self.color:
             lookup = {
                 wx.WXK_UP: model.NORTH,
@@ -102,13 +108,26 @@ class View(wx.Panel):
         dc.SetClippingRegion(0, 0, size * 16 + 1, size * 16 + 1)
         dc.SetBrush(wx.WHITE_BRUSH)
         dc.DrawRectangle(0, 0, size * 16 + 1, size * 16 + 1)
-        for color, start, end in self.lines:
+        for color, start, end, direction in self.lines:
             dc.SetPen(wx.Pen(colors[color], 3, wx.DOT))
             x1, y1 = model.xy(start)
             x1, y1 = x1 * size + size / 2, y1 * size + size / 2
             x2, y2 = model.xy(end)
             x2, y2 = x2 * size + size / 2, y2 * size + size / 2
-            dc.DrawLine(x1, y1, x2, y2)
+            if x1 > x2 and direction == 'E':
+                dc.DrawLine(x1, y1, 800, y2)
+                dc.DrawLine(0, y1, x2, y2)
+            elif x1 < x2 and direction == 'W':
+                dc.DrawLine(800, y1, x2, y2)
+                dc.DrawLine(x1, y1, 0, y2)
+            elif y1 > y2 and direction == 'S':
+                dc.DrawLine(x1, y1, x2, 800)
+                dc.DrawLine(x1, 0, x2, y2)
+            elif y1 < y2 and direction == 'N':
+                dc.DrawLine(x1, 800, x2, y2)
+                dc.DrawLine(x1, y1, x2, 0)
+            else:
+                dc.DrawLine(x1, y1, x2, y2)
         for j in range(16):
             for i in range(16):
                 x = i * size
@@ -154,9 +173,9 @@ class View(wx.Panel):
 class Frame(wx.Frame):
     def __init__(self, seed=None):
         wx.Frame.__init__(self, None, -1, 'Ricochet Robot!')
-        game = model.Game(seed)
+        match = model.Match(seed)
         #game = model.Game.hardest()
-        self.view = View(self, game)
+        self.view = View(self, match)
         self.view.SetSize((800, 800))
         self.Fit()
 
