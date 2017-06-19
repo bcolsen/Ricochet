@@ -259,9 +259,8 @@ class Game(object):
         self.token = token or random.choice(TOKENS)
         self.moves = 0
         self.last = None
-        self.last_active = None
-        self.solve_robots = None
         self.new_robot = False
+        self.start_robots = dict(self.robots)
     def place_robots(self):
         result = {}
         used = set()
@@ -284,14 +283,13 @@ class Game(object):
                 return color
         return None
     def can_move(self, color, direction, index):
-#        if color == self.token[0] and self.new_robot:
-#            #print color, direction, index, self.new_robot, self.last_active
-#            if self.last_active == (color, REVERSE[direction], index):
-#                print 'not new direction rev', color, direction
-#                return False
-#            if self.last_active == (color, direction, index):
-#                print 'not new direction same', color, direction
-#                return False
+        #print color, direction, index, self.new_robot, self.last_new
+        if self.last_new == (color, REVERSE[direction], index):
+            #print 'not new direction rev', color, direction
+            return False
+        if self.last_new == (color, direction, index):
+            #print 'not new direction same', color, direction
+            return False
         index = self.robots[color]
         if direction in self.grid[index]:
             return False
@@ -307,6 +305,7 @@ class Game(object):
         row = index - index % MOD[direction]
         #print row
         i = 0
+        self.new_robot = False
         while True:
             #print index, index % MOD[direction]
             if direction in self.grid[index]:
@@ -316,9 +315,10 @@ class Game(object):
                 index = new_index
                 break
             elif new_index in robots:
-                if color == self.token[0] and not (new_index in self.start_robots):
+                rcolor = self.robots.keys()[self.robots.values().index(new_index)]
+                if color == self.token[0] and not (new_index == self.start_robots[rcolor]):
                     self.new_robot = True
-                    #print "new robot", new_index, self.start_robots
+                    #print "new robot", new_index, rcolor, self.start_robots
                 break
             index = new_index
         return index
@@ -328,16 +328,12 @@ class Game(object):
         last = self.last
 #        if last == (color, REVERSE[direction]):
 #            raise Exception
-        if self.new_robot and color == self.token[0]:
-            self.new_robot = False
         end = self.compute_move(color, direction)
 #        if start == end:
 #            raise Exception
         self.moves += 1
         self.robots[color] = end
         self.last = (color, direction, index) #should be end
-        if color == self.token[0]:
-            self.last_active = self.last
         return (color, start, last)
     def undo_move(self, data):
         color, start, last = data
@@ -368,7 +364,9 @@ class Game(object):
                     try:
                         m_move = next(iter_sol)
                     except StopIteration:
+                        #print 'false'
                         return False
+        #print 'true'
         return True
 #    def mono(self, path):
 #        other_colors = list(COLORS)
@@ -379,7 +377,6 @@ class Game(object):
 #        else:
 #            return False
     def search(self):
-        self.start_robots = self.robots.values()
         #print self.start_robots 
         self.new_robot = False
         max_depth = 1
@@ -394,12 +391,12 @@ class Game(object):
             max_depth += 1
     def _search(self, path, new_robot, memo, depth, max_depth):
         if self.over():# and self.new_robot:
-            #print path, new_robot
+#            if any([i[0] for i in new_robot]):
+#                print path, new_robot
             if self.unique(path):
-                if any(new_robot):
-                    #print path
-                    if self.solve_robots is None:
-                        self.solve_robots = dict(self.robots)
+                #print path, new_robot
+                if any([i[0] for i in new_robot]):
+                    print path
                     self.result_list += [list(path)]
                 else:
                     print 'mono', path
@@ -416,11 +413,16 @@ class Game(object):
             colors = [self.token[0]]
         else:
             colors = None
+        try:
+            self.last_new = [(i[0],i[1],v[1]) for (i, v) in zip(path, new_robot) if v[0]][-1]
+            #print path, new_robot, self.last_new
+        except IndexError:
+            self.last_new = None
         moves = self.get_moves(colors)
         for move in moves:
             data = self.do_move(*move)
             path.append(move)
-            new_robot.append(self.new_robot)
+            new_robot.append((self.new_robot,self.robots[move[0]]))
             result = self._search(path, new_robot, memo, depth + 1, max_depth)
             #print path
             path.pop(-1)
