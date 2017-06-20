@@ -50,8 +50,9 @@ RED = 'R'
 GREEN = 'G'
 BLUE = 'B'
 YELLOW = 'Y'
+SILVER = 'L'
 
-COLORS = [RED, GREEN, BLUE, YELLOW]
+COLORS = [RED, GREEN, BLUE, YELLOW, SILVER]
 
 # Shapes
 CIRCLE = 'C'
@@ -62,7 +63,7 @@ HEXAGON = 'H'
 SHAPES = [CIRCLE, TRIANGLE, SQUARE, HEXAGON]
 
 # Tokens
-TOKENS = [''.join(token) for token in itertools.product(COLORS, SHAPES)]
+TOKENS = [''.join(token) for token in itertools.product(COLORS[0:4], SHAPES)]
 
 # Quadrants
 QUAD_1A = (
@@ -219,25 +220,35 @@ def to_mask(cell):
             result |= mask
     return result
 
+def get_row_column(index, direction):
+    if direction in 'NS':
+        return index % 16
+    elif direction in 'EW':
+        return index // 16
+
 #Set
 class Match(object):
-    def __init__(self, seed=None, quads=None, robots=None, token=None):
+    def __init__(self, seed=None, quads=None, robots=None, token=None, num_robots=4):
         if seed:
             random.seed(seed)
         self.seed = seed
         self.quads = quads
         self.tokens = list(TOKENS)
         random.shuffle(self.tokens)
+        self.num_robots = num_robots
         
         token = self.tokens.pop()
-        self.game = Game(self.seed, self.quads, robots, token)
+        self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         
     def next_game(self, robots=None):
         token = self.tokens.pop()
         if robots is None:
-            robots = [self.game.robots[x] for x in 'RGBY']
+            if self.num_robots == 5:
+                robots = [self.game.robots[x] for x in 'RGBYL']
+            else:
+                robots = [self.game.robots[x] for x in 'RGBY']
         print 'game solve', robots
-        self.game = Game(self.seed, self.quads, robots, token)
+        self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         return self.game
     
 # Game
@@ -248,14 +259,16 @@ class Game(object):
         robots = [226, 48, 43, 18]
         token = 'BT'
         return Game(quads=quads, robots=robots, token=token)
-    def __init__(self, seed=None, quads=None, robots=None, token=None):
+    def __init__(self, seed=None, quads=None, robots=None, token=None, num_robots=4):
         if seed:
             random.seed(seed)
         self.grid = create_grid(quads)
+        print self.grid
+        self.colors = COLORS[:num_robots]
         if robots is None:
             self.robots = self.place_robots()
         else:
-            self.robots = dict(zip(COLORS, robots))
+            self.robots = dict(zip(self.colors, robots))
         self.token = token or random.choice(TOKENS)
         self.moves = 0
         self.last = None
@@ -264,7 +277,7 @@ class Game(object):
     def place_robots(self):
         result = {}
         used = set()
-        for color in COLORS:
+        for color in self.colors:
             while True:
                 index = random.randint(0, 255)
                 if index in (119, 120, 135, 136):
@@ -342,7 +355,7 @@ class Game(object):
         self.last = last
     def get_moves(self, colors=None):
         result = []
-        colors = colors or COLORS
+        colors = colors or self.colors
         for color in colors:
             for direction in DIRECTIONS:
                 if self.can_move(color, direction, self.robots[color]):
@@ -357,15 +370,18 @@ class Game(object):
         #print 'unique', path
         for sol in self.result_list + self.mono_list:
             iter_sol = iter(sol)
-            m_move = next(iter_sol)
-            for move in path:
-                #print move, m_move
-                if move == m_move:
+            m_c, m_d, m_i = next(iter_sol)
+            for c, d, i in path:
+                rc = get_row_column(i,d)
+                m_rc = get_row_column(m_i,m_d)
+                #print (c, d, i), rc, (m_c, m_d, m_i),m_rc
+                if (c, d) == (m_c, m_d) and rc == m_rc:
                     try:
-                        m_move = next(iter_sol)
+                        m_c, m_d, m_i = next(iter_sol)
                     except StopIteration:
                         #print 'false'
                         return False
+                        yo
         #print 'true'
         return True
 #    def mono(self, path):
@@ -434,7 +450,7 @@ class Game(object):
     def export(self):
         grid = []
         token = None
-        robots = [self.robots[color] for color in COLORS]
+        robots = [self.robots[color] for color in self.colors]
         for index, cell in enumerate(self.grid):
             mask = to_mask(cell)
             if index in robots:
@@ -442,7 +458,7 @@ class Game(object):
             grid.append(mask)
             if self.token in cell:
                 token = index
-        robot = COLORS.index(self.token[0])
+        robot = self.colors.index(self.token[0])
         return {
             'grid': grid,
             'robot': robot,

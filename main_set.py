@@ -95,6 +95,8 @@ class View(wx.Panel):
             model.BLUE: wx.Colour(65, 105, 225),
             model.YELLOW: wx.Colour(255, 215, 0),
         }
+        if len(self.game.robots) == 5:
+            colors[model.SILVER] = wx.Colour(100, 100, 100)
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetBackground(wx.LIGHT_GREY_BRUSH)
         dc.Clear()
@@ -171,9 +173,10 @@ class View(wx.Panel):
         dc.DrawText(str(self.game.moves), wall + 1, wall + 1)
 
 class Frame(wx.Frame):
-    def __init__(self, seed=None):
+    def __init__(self, seed=None, num_robots=None):
         wx.Frame.__init__(self, None, -1, 'Ricochet Robot!')
-        match = model.Match(seed)
+        print seed, num_robots
+        match = model.Match(seed, num_robots=num_robots)
         #game = model.Game.hardest()
         self.view = View(self, match)
         self.view.SetSize((800, 800))
@@ -181,9 +184,10 @@ class Frame(wx.Frame):
 
 def main():
     app = wx.App(False)
-    seed = int(sys.argv[1]) if len(sys.argv) == 2 else None
-    print seed
-    frame = Frame(seed)
+    seed = int(sys.argv[1]) if len(sys.argv) >= 2 else None
+    num_robots = int(sys.argv[2]) if len(sys.argv) == 3 else 4
+    print seed, num_robots
+    frame = Frame(seed, num_robots)
     frame.Center()
     frame.Show()
     app.MainLoop()
