@@ -1,6 +1,8 @@
 import itertools
 import random
 
+from boards import *
+
 # Directions
 NORTH = 'N'
 EAST = 'E'
@@ -154,11 +156,18 @@ QUAD_4B = (
     'X,X,X,X,X,X,E,NW'
 )
 
+#QUADS = [
+#    (QUAD_1A, QUAD_1B),
+#    (QUAD_2A, QUAD_2B),
+#    (QUAD_3A, QUAD_3B),
+#    (QUAD_4A, QUAD_4B),
+#]
+
 QUADS = [
-    (QUAD_1A, QUAD_1B),
-    (QUAD_2A, QUAD_2B),
-    (QUAD_3A, QUAD_3B),
-    (QUAD_4A, QUAD_4B),
+    (Q_B1, Q_B2, Q_B3),
+    (Q_R1, Q_R2, Q_R3),
+    (Q_G1, Q_G2, Q_G3),
+    (Q_Y1, Q_Y2, Q_Y3),
 ]
 
 # Rotation
@@ -211,6 +220,14 @@ def create_grid(quads=None):
             y += dy * 8
             index = idx(x, y)
             result[index] = data
+    for i, data in enumerate(result):
+        if 'J' in data:
+            for direction in 'NSEW':
+                if direction in data:
+                    index = i + OFFSET[direction]
+                    print result[index]
+                    if not REVERSE[direction] in result[index]:
+                        result[index] += REVERSE[direction]
     return result
 
 def to_mask(cell):
@@ -263,7 +280,6 @@ class Game(object):
         if seed:
             random.seed(seed)
         self.grid = create_grid(quads)
-        print self.grid
         self.colors = COLORS[:num_robots]
         if robots is None:
             self.robots = self.place_robots()
@@ -412,10 +428,10 @@ class Game(object):
             if self.unique(path):
                 #print path, new_robot
                 if any([i[0] for i in new_robot]):
-                    print path
+                    print '**', len(path), ', '.join(''.join(move[0:-1]) for move in path)
                     self.result_list += [list(path)]
                 else:
-                    print 'mono', path
+                    print 'mono', len(path), ', '.join(''.join(move[0:-1]) for move in path)
                     self.mono_list += [list(path)]
 #            else:
 #                print "not unique"

@@ -2,6 +2,7 @@ import wx
 import sys
 import model
 import ricochet
+from boards import *
 
 class View(wx.Panel):
     def __init__(self, parent, match):
@@ -21,6 +22,7 @@ class View(wx.Panel):
         self.path = list(self.solutions[0])
         #self.path = ricochet.search(self.game, self.callback)
         #print 'solved', self.solutions
+        print '\nSolutions:'
         for i, path in enumerate(self.solutions):
             print i, len(path), ', '.join(''.join(move[0:-1]) for move in path)
         #self.on_solve()
@@ -173,10 +175,10 @@ class View(wx.Panel):
         dc.DrawText(str(self.game.moves), wall + 1, wall + 1)
 
 class Frame(wx.Frame):
-    def __init__(self, seed=None, num_robots=None):
+    def __init__(self, seed=None, num_robots=None, quads=None):
         wx.Frame.__init__(self, None, -1, 'Ricochet Robot!')
         print seed, num_robots
-        match = model.Match(seed, num_robots=num_robots)
+        match = model.Match(seed, quads=quads, num_robots=num_robots)
         #game = model.Game.hardest()
         self.view = View(self, match)
         self.view.SetSize((800, 800))
@@ -185,9 +187,10 @@ class Frame(wx.Frame):
 def main():
     app = wx.App(False)
     seed = int(sys.argv[1]) if len(sys.argv) >= 2 else None
-    num_robots = int(sys.argv[2]) if len(sys.argv) == 3 else 4
+    num_robots = int(sys.argv[2]) if len(sys.argv) >= 3 else 4
+    quads = eval(sys.argv[3]) if len(sys.argv) == 4 else None
     print seed, num_robots
-    frame = Frame(seed, num_robots)
+    frame = Frame(seed, num_robots, quads)
     frame.Center()
     frame.Show()
     app.MainLoop()
