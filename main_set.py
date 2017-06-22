@@ -172,6 +172,15 @@ class View(wx.Panel):
                     dc.DrawCircle(x, y, wall - 1)
                     dc.DrawCircle(x, y + size, wall - 1)
                     dc.DrawRectangle(x, y, wall, size + 1)
+                # bumpers
+                if model.LEFT in cell:
+                    bumper_color = [c for c in colors.keys() if c in cell][0]
+                    dc.SetPen(wx.Pen(colors[bumper_color], 9))
+                    dc.DrawLine(x, y, x + size, y + size)
+                if model.RIGHT in cell:
+                    bumper_color = [c for c in colors.keys() if c in cell][0]
+                    dc.SetPen(wx.Pen(colors[bumper_color], 9))
+                    dc.DrawLine(x + size, y, x, y + size)
         dc.DrawText(str(self.game.moves), wall + 1, wall + 1)
 
 class Frame(wx.Frame):

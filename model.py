@@ -18,6 +18,20 @@ REVERSE = {
     WEST: EAST,
 }
 
+L_TURN = {
+    NORTH: WEST,
+    EAST: SOUTH,
+    SOUTH: EAST,
+    WEST: NORTH,
+}
+
+R_TURN = {
+    NORTH: EAST,
+    EAST: NORTH,
+    SOUTH: WEST,
+    WEST: SOUTH,
+}
+
 OFFSET = {
     NORTH: -16,
     EAST: 1,
@@ -47,6 +61,10 @@ M_LOOKUP = {
     WEST: M_WEST,
 }
 
+# Bumpers
+LEFT = 'D'
+RIGHT = 'F'
+
 # Colors
 RED = 'R'
 GREEN = 'G'
@@ -61,6 +79,8 @@ CIRCLE = 'C'
 TRIANGLE = 'T'
 SQUARE = 'Q'
 HEXAGON = 'H'
+
+RAINBOW = 'J'
 
 SHAPES = [CIRCLE, TRIANGLE, SQUARE, HEXAGON]
 
@@ -187,6 +207,8 @@ ROTATE_WALL = {
     EAST: SOUTH,
     SOUTH: WEST,
     WEST: NORTH,
+    LEFT: RIGHT,
+    RIGHT: LEFT,
 }
 
 # Helper Functions
@@ -331,20 +353,28 @@ class Game(object):
         robots = self.robots.values()
         #print color, direction
         #print index, index % MOD[direction]
-        row = index - index % MOD[direction]
+        #row = index - index % MOD[direction]
         #print row
         i = 0
         self.new_robot = False
         while True:
-            #print index, index % MOD[direction]
-            if direction in self.grid[index]:
+            #print index, direction, index % MOD[direction]
+            # Bumpers
+            if color not in self.grid[index]: #Same colors go through
+                if LEFT in self.grid[index]:
+                    direction = L_TURN[direction]
+                if RIGHT in self.grid[index]:
+                    direction = R_TURN[direction]
+            if direction in self.grid[index]: # Hit a wall and stop
                 break
+            row = index - index % MOD[direction]
             new_index = (index + OFFSET[direction]) % MOD[direction] + row
-            if new_index == self.robots[color]:
+            if new_index == self.robots[color]: #Infinite loop
                 index = new_index
                 break
-            elif new_index in robots:
+            elif new_index in robots: # Hit a wall and stop before
                 rcolor = self.robots.keys()[self.robots.values().index(new_index)]
+                # if new robot
                 if color == self.token[0] and not (new_index == self.start_robots[rcolor]):
                     self.new_robot = True
                     #print "new robot", new_index, rcolor, self.start_robots

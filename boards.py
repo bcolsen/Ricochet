@@ -32,6 +32,17 @@ Q_G3 = (
     'NW,X,X,X,X,X,E,NW'
 )
 
+Q_G4 = (
+    'X,X,X,X,X,NE,NW,X,'
+    'X,X,X,X,GF,X,X,X,'
+    'X,S,X,X,X,X,X,X,'
+    'E,NWRC,X,X,X,X,X,X,'
+    'X,X,X,X,X,X,SEYH,W,'
+    'SW,X,S,X,X,X,N,X,'
+    'NW,X,NEGT,SWBQ,X,X,X,S,'
+    'X,X,X,N,X,YD,E,NW'
+)
+
 Q_Y1 = (
     'X,X,X,NE,NW,X,X,X,'
     'X,X,X,X,X,E,SWBC,X,'
@@ -63,6 +74,17 @@ Q_Y3 = (
     'X,S,X,N,X,E,NWGQ,X,'
     'X,NEYT,W,X,X,X,X,S,'
     'X,X,X,X,X,X,E,NW'
+)
+
+Q_Y4 = (
+    'X,X,X,X,NE,NW,X,X,'
+    'X,X,RD,X,X,X,S,X,'
+    'X,X,S,X,X,E,NWYT,X,'
+    'X,X,NEBC,SWGQ,X,X,X,X,'
+    'X,X,X,N,X,X,X,X,'
+    'X,SERH,W,X,X,X,X,X,'
+    'SW,N,X,GD,X,X,X,S,'
+    'NW,X,X,X,X,SEJ,WE,NW'
 )
 
 Q_B1 = (
@@ -98,6 +120,17 @@ Q_B3 = (
     'X,X,X,X,X,X,E,NW'
 )
 
+Q_B4 = (
+    'X,X,NE,NW,X,X,X,X,'
+    'X,X,BF,X,X,X,S,X,'
+    'X,X,X,X,X,SEGH,NWYC,X,'
+    'X,X,X,X,X,N,X,X,'
+    'X,X,X,X,X,X,X,RD,'
+    'E,SWRQ,X,X,X,X,X,X,'
+    'SW,N,X,X,S,X,X,S,'
+    'NW,X,X,X,NEBT,W,E,NW'
+)
+
 Q_R2 = (
     'X,X,X,NE,NW,X,X,X,'
     'X,X,X,X,X,X,X,X,'
@@ -129,4 +162,15 @@ Q_R3 = (
     'SW,X,X,X,E,NWYQ,X,X,'
     'NW,X,X,SEBH,W,X,X,S,'
     'X,X,X,N,X,X,E,NW'
+)
+
+Q_R4 = (
+    'X,X,X,X,NE,NW,X,X,'
+    'X,X,X,X,BD,X,X,X,'
+    'SW,X,X,X,X,X,SEBH,W,'
+    'NW,X,S,X,X,X,YDN,X,'
+    'X,X,NEGC,SWRT,X,X,X,X,'
+    'X,X,X,N,X,S,X,X,'
+    'X,X,X,X,E,NWYQ,X,S,'
+    'X,X,X,X,X,X,E,NW'
 )
