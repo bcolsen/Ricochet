@@ -87,109 +87,19 @@ SHAPES = [CIRCLE, TRIANGLE, SQUARE, HEXAGON]
 # Tokens
 TOKENS = [''.join(token) for token in itertools.product(COLORS[0:4], SHAPES)]
 
-# Quadrants
-QUAD_1A = (
-    'X,X,X,X,NE,NW,X,X,'
-    'X,S,X,X,X,X,SEYH,W,'
-    'E,NWGT,X,X,X,X,N,X,'
-    'X,X,X,X,X,X,X,X,'
-    'X,X,X,X,X,X,S,X,'
-    'SW,X,X,X,X,X,NEBQ,W,'
-    'NW,X,E,SWRC,X,X,X,S,'
-    'X,X,X,N,X,X,E,NW'
-)
-
-QUAD_1B = (
-    'X,NE,NW,X,S,X,X,X,'
-    'X,S,X,E,NWRC,X,X,X,'
-    'X,NEGT,W,X,X,X,X,X,'
-    'X,X,X,X,X,X,SEYH,W,'
-    'X,X,X,X,X,X,N,X,'
-    'SW,X,X,X,X,X,X,X,'
-    'NW,X,E,SWBQ,X,X,X,S,'
-    'X,X,X,N,X,X,E,NW'
-)
-
-QUAD_2A = (
-    'X,X,X,NE,NW,X,X,X,'
-    'X,X,X,X,X,E,SWBC,X,'
-    'X,S,X,X,X,X,N,X,'
-    'X,NEYT,W,X,X,S,X,X,'
-    'X,X,X,X,E,NWGQ,X,X,'
-    'X,X,SERH,W,X,X,X,X,'
-    'SW,X,N,X,X,X,X,S,'
-    'NW,X,X,X,X,X,E,NW'
-)
-
-QUAD_2B = (
-    'X,X,X,X,NE,NW,X,X,'
-    'X,X,SERH,W,X,X,X,X,'
-    'X,X,N,X,X,X,X,X,'
-    'E,SWGQ,X,X,X,X,S,X,'
-    'SW,N,X,X,X,E,NWYT,X,'
-    'NW,X,X,X,X,S,X,X,'
-    'X,X,X,X,X,NEBC,W,S,'
-    'X,X,X,X,X,X,E,NW'
-)
-
-QUAD_3A = (
-    'X,X,X,NE,NW,X,X,X,'
-    'X,X,X,X,X,SEGH,W,X,'
-    'E,SWRQ,X,X,X,N,X,X,'
-    'SW,N,X,X,X,X,S,X,'
-    'NW,X,X,X,X,E,NWYC,X,'
-    'X,X,S,X,X,X,X,X,'
-    'X,X,NEBT,W,X,X,X,S,'
-    'X,X,X,X,X,X,E,NW'
-)
-
-QUAD_3B = (
-    'X,X,S,X,NE,NW,X,X,'
-    'X,E,NWYC,X,X,X,X,X,'
-    'X,X,X,X,X,X,X,X,'
-    'X,X,X,X,X,E,SWBT,X,'
-    'SW,X,X,X,S,X,N,X,'
-    'NW,X,X,X,NERQ,W,X,X,'
-    'X,SEGH,W,X,X,X,X,S,'
-    'X,N,X,X,X,X,E,NW'
-)
-
-QUAD_4A = (
-    'X,X,X,NE,NW,X,X,X,'
-    'X,X,X,X,X,X,X,X,'
-    'X,X,X,X,X,SEBH,W,X,'
-    'X,X,S,X,X,N,X,X,'
-    'SW,X,NEGC,W,X,X,X,X,'
-    'NW,S,X,X,X,X,E,SWRT,'
-    'E,NWYQ,X,X,X,X,X,NS,'
-    'X,X,X,X,X,X,E,NW'
-)
-
-QUAD_4B = (
-    'X,X,X,NE,NW,X,X,X,'
-    'E,SWRT,X,X,X,X,S,X,'
-    'X,N,X,X,X,X,NEGC,W,'
-    'X,X,X,X,X,X,X,X,'
-    'X,X,SEBH,W,X,X,X,S,'
-    'SW,X,N,X,X,X,E,NWYQ,'
-    'NW,X,X,X,X,X,X,S,'
-    'X,X,X,X,X,X,E,NW'
-)
-
-#QUADS = [
-#    (QUAD_1A, QUAD_1B),
-#    (QUAD_2A, QUAD_2B),
-#    (QUAD_3A, QUAD_3B),
-#    (QUAD_4A, QUAD_4B),
-#]
-
 QUADS = [
-    (Q_B1, Q_B2, Q_B3),
-    (Q_R1, Q_R2, Q_R3),
-    (Q_G1, Q_G2, Q_G3),
-    (Q_Y1, Q_Y2, Q_Y3),
+    (Q_R1, Q_R2, Q_R3, Q_R4),
+    (Q_G1, Q_G2, Q_G3, Q_G4),
+    (Q_B1, Q_B2, Q_B3, Q_B4),
+    (Q_Y1, Q_Y2, Q_Y3, Q_Y4),
 ]
 
+P_QUADS = [
+    (P_R1, P_R2, P_R3, P_R4),
+    (P_G1, P_G2, P_G3, P_G4),
+    (P_B1, P_B2, P_B3, P_B4),
+    (P_Y1, P_Y2, P_Y3, P_Y4),
+]
 # Rotation
 ROTATE_QUAD = [
     56, 48, 40, 32, 24, 16,  8,  0, 
@@ -280,7 +190,10 @@ class Match(object):
         self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         
     def next_game(self, robots=None):
-        token = self.tokens.pop()
+        try:
+            token = self.tokens.pop()
+        except IndexError:
+            print "The Match is over..Computer Wins"
         if robots is None:
             if self.num_robots == 5:
                 robots = [self.game.robots[x] for x in 'RGBYL']

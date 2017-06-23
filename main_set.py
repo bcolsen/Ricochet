@@ -2,7 +2,6 @@ import wx
 import sys
 import model
 import ricochet
-from boards import *
 
 class View(wx.Panel):
     def __init__(self, parent, match):
@@ -196,9 +195,12 @@ class Frame(wx.Frame):
 def main():
     app = wx.App(False)
     seed = int(sys.argv[1]) if len(sys.argv) >= 2 else None
-    num_robots = int(sys.argv[2]) if len(sys.argv) >= 3 else 4
-    quads = eval(sys.argv[3]) if len(sys.argv) == 4 else None
-    print seed, num_robots
+    periodic = bool(int(sys.argv[2])) if len(sys.argv) >= 3 else False
+    num_robots = int(sys.argv[3]) if len(sys.argv) >= 4 else 4
+    quad_list = sys.argv[4].split(',') if len(sys.argv) == 5 else None
+    print seed, num_robots, periodic, quad_list
+    s_quads = model.P_QUADS if periodic else model.QUADS
+    quads = [s_quads[model.COLORS.index(s[0])][int(s[1])-1] for s in quad_list] if quad_list else None
     frame = Frame(seed, num_robots, quads)
     frame.Center()
     frame.Show()
