@@ -1,7 +1,6 @@
 import wx
 import sys
 import model
-import ricochet
 
 class View(wx.Panel):
     def __init__(self, parent, match):
