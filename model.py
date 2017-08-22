@@ -330,13 +330,14 @@ class Game(object):
         for sol in self.result_list + self.mono_list:
             iter_sol = iter(sol)
             m_c, m_d, m_i = next(iter_sol)
+            m_rc = get_row_column(m_i,m_d)
             for c, d, i in path:
                 rc = get_row_column(i,d)
-                m_rc = get_row_column(m_i,m_d)
                 #print (c, d, i), rc, (m_c, m_d, m_i),m_rc
                 if (c, d) == (m_c, m_d) and rc == m_rc:
                     try:
                         m_c, m_d, m_i = next(iter_sol)
+                        m_rc = get_row_column(m_i,m_d)
                     except StopIteration:
                         #print 'false'
                         return False
@@ -361,7 +362,7 @@ class Game(object):
             print 'Searching to depth:', max_depth
             self.new_robot = False
             result = self._search([], [], set(), 0, max_depth)
-            if len(self.result_list) >= 5 or max_depth > 10:
+            if len(self.result_list) >= 5 or max_depth > 9:
                 return self.result_list
             max_depth += 1
     def _search(self, path, new_robot, memo, depth, max_depth):
@@ -380,7 +381,13 @@ class Game(object):
 #                print "not unique"
         if depth == max_depth:
             return None
+        if max_depth >= 8 and len(self.result_list) >= 5:
+            return None
+        elif max_depth >= 10 and len(self.result_list) >= 1:
+            return None
         key = (depth, self.key())
+        if key in memo:
+            return None
         if key in memo:
             return None
         memo.add(key)
