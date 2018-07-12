@@ -127,7 +127,7 @@ def idx(x, y, size=16):
 
 def xy(index, size=16):
     x = index % size
-    y = index / size
+    y = index // size
     return (x, y)
 
 def rotate_quad(data, times=1):
@@ -157,7 +157,7 @@ def create_grid(quads=None):
             for direction in 'NSEW':
                 if direction in data:
                     index = i + OFFSET[direction]
-                    print result[index]
+                    print(result[index])
                     if not REVERSE[direction] in result[index]:
                         result[index] += REVERSE[direction]
     return result
@@ -193,13 +193,13 @@ class Match(object):
         try:
             token = self.tokens.pop()
         except IndexError:
-            print "The Match is over..Computer Wins"
+            print("The Match is over..Computer Wins")
         if robots is None:
             if self.num_robots == 5:
                 robots = [self.game.robots[x] for x in 'RGBYL']
             else:
                 robots = [self.game.robots[x] for x in 'RGBY']
-        print 'game solve', robots
+        print('game solve', robots)
         self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         return self.game
     
@@ -242,7 +242,7 @@ class Game(object):
                 break
         return result
     def get_robot(self, index):
-        for color, position in self.robots.iteritems():
+        for color, position in self.robots.items():
             if position == index:
                 return color
         return None
@@ -258,7 +258,7 @@ class Game(object):
         if direction in self.grid[index]:
             return False
         new_index = index + OFFSET[direction]
-        if new_index in self.robots.itervalues():
+        if new_index in self.robots.values():
             return False
         return True
     def compute_move(self, color, direction):
@@ -286,7 +286,7 @@ class Game(object):
                 index = new_index
                 break
             elif new_index in robots: # Hit a wall and stop before
-                rcolor = self.robots.keys()[self.robots.values().index(new_index)]
+                rcolor = list(self.robots.keys())[list(self.robots.values()).index(new_index)]
                 # if new robot
                 if color == self.token[0] and not (new_index == self.start_robots[rcolor]):
                     self.new_robot = True
@@ -324,7 +324,7 @@ class Game(object):
         color = self.token[0]
         return self.token in self.grid[self.robots[color]]
     def key(self):
-        return tuple(self.robots.itervalues())
+        return tuple(self.robots.values())
     def unique(self,path):
         #print 'unique', path
         for sol in self.result_list + self.mono_list:
@@ -341,7 +341,6 @@ class Game(object):
                     except StopIteration:
                         #print 'false'
                         return False
-                        yo
         #print 'true'
         return True
 #    def mono(self, path):
@@ -359,7 +358,7 @@ class Game(object):
         self.result_list = []
         self.mono_list = []
         while True:
-            print 'Searching to depth:', max_depth
+            print('Searching to depth:', max_depth)
             self.new_robot = False
             result = self._search([], [], set(), 0, max_depth)
             if len(self.result_list) >= 5 or max_depth > 9:
@@ -372,10 +371,10 @@ class Game(object):
             if self.unique(path):
                 #print path, new_robot
                 if any([i[0] for i in new_robot]):
-                    print '**', len(path), ', '.join(''.join(move[0:-1]) for move in path)
+                    print('**', len(path), ', '.join(''.join(move[0:-1]) for move in path))
                     self.result_list += [list(path)]
                 else:
-                    print 'mono', len(path), ', '.join(''.join(move[0:-1]) for move in path)
+                    print('mono', len(path), ', '.join(''.join(move[0:-1]) for move in path))
                     self.mono_list += [list(path)]
 #            else:
 #                print "not unique"

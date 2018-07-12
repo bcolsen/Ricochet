@@ -60,7 +60,7 @@ if __name__ == '__main__':
     best = (0, 0)
     hist = collections.defaultdict(int)
     def callback(depth, nodes, inner, hits):
-        print 'Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits)
+        print('Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits))
     seed = 0
     while True:
         count += 1

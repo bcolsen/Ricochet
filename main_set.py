@@ -20,12 +20,12 @@ class View(wx.Panel):
         self.path = list(self.solutions[0])
         #self.path = ricochet.search(self.game, self.callback)
         #print 'solved', self.solutions
-        print '\nSolutions:'
+        print('\nSolutions:')
         for i, path in enumerate(self.solutions):
-            print i, len(path), ', '.join(''.join(move[0:-1]) for move in path)
+            print( i, len(path), ', '.join(''.join(move[0:-1]) for move in path))
         #self.on_solve()
     def callback(self, depth, nodes, inner, hits):
-        print 'Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits)
+        print('Depth: %d, Nodes: %d (%d inner, %d hits)' % (depth, nodes, inner, hits))
     def on_solve(self):
         if not self.path:
             return
@@ -89,33 +89,41 @@ class View(wx.Panel):
                     #pass
                 self.Refresh()
     def on_paint(self, event):
+        pen_alpha = 150
         colors = {
             model.RED: wx.Colour(178, 34, 34),
             model.GREEN: wx.Colour(50, 205, 50),
             model.BLUE: wx.Colour(65, 105, 225),
             model.YELLOW: wx.Colour(255, 215, 0),
         }
+        pen_colors = {
+            model.RED: wx.Colour(178, 34, 34, pen_alpha),
+            model.GREEN: wx.Colour(50, 205, 50, pen_alpha),
+            model.BLUE: wx.Colour(65, 105, 225, pen_alpha),
+            model.YELLOW: wx.Colour(255, 215, 0, pen_alpha),
+        }
         if len(self.game.robots) == 5:
             colors[model.SILVER] = wx.Colour(100, 100, 100)
+            pen_colors[model.SILVER] = wx.Colour(100, 100, 100, pen_alpha)
         dc = wx.AutoBufferedPaintDC(self)
         dc.SetBackground(wx.LIGHT_GREY_BRUSH)
         dc.Clear()
         w, h = self.GetClientSize()
         p = 40
-        size = min((w - p) / 16, (h - p) / 16)
-        wall = size / 8
-        ox = (w - size * 16) / 2
-        oy = (h - size * 16) / 2
+        size = min((w - p) // 16, (h - p) // 16)
+        wall = size // 8
+        ox = (w - size * 16) // 2
+        oy = (h - size * 16) // 2
         dc.SetDeviceOrigin(ox, oy)
         dc.SetClippingRegion(0, 0, size * 16 + 1, size * 16 + 1)
         dc.SetBrush(wx.WHITE_BRUSH)
         dc.DrawRectangle(0, 0, size * 16 + 1, size * 16 + 1)
         for color, start, end, direction in self.lines:
-            dc.SetPen(wx.Pen(colors[color], 3, wx.DOT))
+            dc.SetPen(wx.Pen(pen_colors[color], 3, wx.PENSTYLE_SHORT_DASH))
             x1, y1 = model.xy(start)
-            x1, y1 = x1 * size + size / 2, y1 * size + size / 2
+            x1, y1 = x1 * size + size // 2, y1 * size + size // 2
             x2, y2 = model.xy(end)
-            x2, y2 = x2 * size + size / 2, y2 * size + size / 2
+            x2, y2 = x2 * size + size // 2, y2 * size + size // 2
             if x1 > x2 and direction == 'E':
                 dc.DrawLine(x1, y1, 800, y2)
                 dc.DrawLine(0, y1, x2, y2)
@@ -151,7 +159,7 @@ class View(wx.Panel):
                 # robot
                 if robot:
                     dc.SetBrush(wx.Brush(colors[robot]))
-                    dc.DrawCircle(x + size / 2, y + size / 2, size / 3)
+                    dc.DrawCircle(x + size // 2, y + size // 2, size // 3)
                 # walls
                 dc.SetBrush(wx.BLACK_BRUSH)
                 if model.NORTH in cell:
@@ -184,7 +192,7 @@ class View(wx.Panel):
 class Frame(wx.Frame):
     def __init__(self, seed=None, num_robots=None, quads=None):
         wx.Frame.__init__(self, None, -1, 'Ricochet Robot!')
-        print seed, num_robots
+        print( seed, num_robots)
         match = model.Match(seed, quads=quads, num_robots=num_robots)
         #game = model.Game.hardest()
         self.view = View(self, match)
@@ -197,9 +205,10 @@ def main():
     periodic = bool(int(sys.argv[2])) if len(sys.argv) >= 3 else False
     num_robots = int(sys.argv[3]) if len(sys.argv) >= 4 else 4
     quad_list = sys.argv[4].split(',') if len(sys.argv) == 5 else None
-    print seed, num_robots, periodic, quad_list
+    print(seed, num_robots, periodic, quad_list)
     s_quads = model.P_QUADS if periodic else model.QUADS
-    quads = [s_quads[model.COLORS.index(s[0])][int(s[1])-1] for s in quad_list] if quad_list else None
+    quads = [s_quads[model.COLORS.index(s[0])][int(s[1])-1]
+                for s in quad_list] if quad_list else None
     frame = Frame(seed, num_robots, quads)
     frame.Center()
     frame.Show()
