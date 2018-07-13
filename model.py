@@ -190,16 +190,25 @@ class Match(object):
         self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         
     def next_game(self, robots=None):
-        try:
-            token = self.tokens.pop()
-        except IndexError:
-            print("The Match is over..Computer Wins")
         if robots is None:
             if self.num_robots == 5:
                 robots = [self.game.robots[x] for x in 'RGBYL']
             else:
                 robots = [self.game.robots[x] for x in 'RGBY']
         print('game solve', robots)
+        try:
+            i=0
+            while True:
+                token = self.tokens[i]
+                token_robot = robots[COLORS.index(token[0])]
+                print(token_robot, token)
+                if self.game.grid[token_robot][-2:] != token:
+                    del self.tokens[i]
+                    break
+                else:
+                    i += 1
+        except IndexError:
+            print("The Match is over..Computer Wins")
         self.game = Game(self.seed, self.quads, robots, token, self.num_robots)
         return self.game
     
