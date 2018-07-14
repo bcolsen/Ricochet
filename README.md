@@ -21,6 +21,11 @@ Option
 - Number of Robots (4 or 5)
 - Boards like (B3,R1,G4,Y3)
 
+example:
+```
+python main_set.py 42 1 5 B3,R1,G4,Y3
+```
+
 Controls
 --------
 To move a robot, select one by color and then use the arrow keys on the keyboard.
