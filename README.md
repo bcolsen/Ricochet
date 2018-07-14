@@ -6,8 +6,8 @@ new robot and periodic board boundaries.
 
 Requirements
 ------------
-Python 3.6+
-wxPython 4+
+- Python 3.6+
+- wxPython 4+
 
 Installation
 ------------
